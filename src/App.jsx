@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const PREGUNTAS = [
+const PREGUNTAS_BASE = [
   { id: 1, seccion: "Claridad Operativa", critica: false, texto: "La empresa tiene claridad sobre qué prácticas operativas ambientales existen actualmente dentro de su operación.", guia: "¿Saben qué están haciendo hoy en términos de prácticas operativas ambientales?" },
   { id: 2, seccion: "Claridad Operativa", critica: false, texto: "Las prácticas operativas ambientales tienen responsables identificados dentro del equipo.", guia: "¿Hay alguien específico encargado o 'lo hace quien puede'?" },
   { id: 3, seccion: "Claridad Operativa", critica: false, texto: "Existe claridad sobre cómo deben ejecutarse las prácticas operativas ambientales en el día a día.", guia: "¿El equipo sabe exactamente qué hacer y cómo hacerlo?" },
@@ -18,20 +18,36 @@ const PREGUNTAS = [
   { id: 15, seccion: "Capacidades Internas", critica: false, texto: "El equipo entiende qué hacer y cómo aplicar las prácticas operativas ambientales dentro de su rol.", guia: "¿Cada persona sabe qué le corresponde hacer a ella específicamente?" },
   { id: 16, seccion: "Capacidades Internas", critica: false, texto: "Las personas comprenden por qué las prácticas operativas ambientales impactan la operación y los recursos de la empresa.", guia: "¿Entienden el 'para qué' o solo siguen instrucciones?" },
   { id: 17, seccion: "Capacidades Internas", critica: true, texto: "Cuando ingresa personal nuevo, la empresa tiene una forma clara de enseñarle cómo ejecutar las prácticas operativas ambientales.", guia: "¿Existe un proceso de inducción ambiental o cada quien aprende solo?" },
-  { id: 18, seccion: "Desperdicios y Recursos", critica: false, texto: "La empresa identifica claramente dónde está generando desperdicios o pérdidas de recursos.", guia: "¿Saben concretamente dónde se van el agua, la energía, los insumos?" },
-  { id: 19, seccion: "Desperdicios y Recursos", critica: false, texto: "Existen acciones concretas para reducir desperdicios dentro de la operación.", guia: "¿Hay algo implementado actualmente para reducir esas pérdidas?" },
+  { id: 18, seccion: "Desperdicios y Recursos", critica: false, texto: "La empresa identifica claramente dónde y cómo se consume el agua en su operación, y tiene control sobre posibles fugas, desperdicios o consumo excesivo.", guia: "¿Sabes en qué parte de tu operación se va más el agua? ¿Has tenido fugas o consumo que no logran explicar?" },
+  { id: 19, seccion: "Desperdicios y Recursos", critica: false, texto: "La empresa identifica claramente dónde y cómo se consume la energía eléctrica en su operación, y tiene control sobre equipos, horarios o prácticas que generan consumo excesivo.", guia: "¿Sabes qué parte de tu operación consume más energía? ¿El recibo de luz te ha sorprendido sin explicación clara?" },
+  { id: 26, seccion: "Desperdicios y Recursos", critica: false, texto: "La empresa separa, mide o tiene algún control sobre los residuos que genera, y conoce hacia dónde van una vez que salen de sus instalaciones.", guia: "¿Separan la basura? ¿Saben a dónde va una vez que se la lleva el camión recolector?" },
   { id: 20, seccion: "Alineación Normativa", critica: false, texto: "La empresa tiene identificados los requisitos normativos básicos relacionados con residuos, salubridad y manejo de recursos.", guia: "¿Saben qué les pide la ley en materia ambiental?" },
   { id: 21, seccion: "Alineación Normativa", critica: false, texto: "La empresa aplica prácticas operativas ambientales básicas relacionadas con residuos, limpieza y manejo de recursos para cumplir con requisitos normativos.", guia: "¿Lo están cumpliendo hoy o hay riesgos de incumplimiento?" },
   { id: 22, seccion: "Alineación Normativa", critica: false, texto: "La empresa realiza algún tipo de seguimiento, registro o reporte relacionado con sus prácticas operativas ambientales.", guia: "¿Registran algo? ¿Tienen evidencia de lo que hacen?" },
   { id: 23, seccion: "Alineación Normativa", critica: false, texto: "La empresa cuenta con alguna certificación, distintivo o iniciativa relacionada con sostenibilidad o gestión ambiental.", guia: "¿Han participado en algún programa como Cocina Verde, Punto Limpio u otro?" },
+  { id: 27, seccion: "Alineación Normativa", critica: false, texto: "La empresa está al tanto de los cambios regulatorios en materia de economía circular que próximamente aplicarán a nivel municipal y tiene visibilidad sobre cómo podrían impactar su manejo actual de residuos e insumos.", guia: "¿Has escuchado algo sobre la nueva Ley de Economía Circular? Viene regulación municipal en camino — ¿la tienes en el radar?" },
 ];
 
-const SECCIONES = [...new Set(PREGUNTAS.map(p => p.seccion))];
+function getPreguntas(nicho) {
+  const alimentos = nicho === "educativo"
+    ? { id: 24, seccion: "Desperdicios y Recursos", critica: false, texto: "La institución identifica claramente dónde se generan desperdicios de alimentos en sus instalaciones — ya sea en cafetería propia o concesionada — y tiene algún mecanismo para conocer o exigir esa información.", guia: "¿Tu cafetería es propia o concesionada? Si es concesionada, ¿le exigen reportar algo sobre manejo de alimentos o residuos?" }
+    : { id: 24, seccion: "Desperdicios y Recursos", critica: false, texto: "La empresa identifica claramente dónde se generan los desperdicios de alimentos — en compras, preparación, servicio o devoluciones — y tiene alguna práctica para reducirlos.", guia: "¿Sabes en qué parte del proceso se desperdician más alimentos — al comprar, al preparar, en el servicio?" };
+
+  const compras = nicho === "educativo"
+    ? { id: 25, seccion: "Desperdicios y Recursos", critica: false, texto: "La institución tiene control sobre qué tanto compra, con qué frecuencia y si hay sobrecompra o desperdicio de insumos que no se llegan a usar.", guia: "¿Tienen control sobre las compras de papelería, material didáctico o insumos de mantenimiento? ¿Hay sobrecompra o desperdicio?" }
+    : { id: 25, seccion: "Desperdicios y Recursos", critica: false, texto: "La empresa tiene control sobre qué tanto compra, con qué frecuencia y si hay sobrecompra o desperdicio de insumos que no se llegan a usar.", guia: "¿Han comprado de más y se les ha echado a perder? ¿Tienen claridad de cuánto compran versus cuánto realmente usan?" };
+
+  const todas = [...PREGUNTAS_BASE, alimentos, compras];
+  // Orden estable dentro de cada sección por id
+  return todas.sort((a, b) => a.id - b.id);
+}
+
+const SECCIONES = [...new Set(PREGUNTAS_BASE.map(p => p.seccion))];
 
 const SEMAFORO_INTEGRACION = [
-  { min: 0, max: 67, color: "rojo", label: "Inicial", desc: "Las prácticas operativas ambientales son mínimas o inexistentes. No hay estructura, responsables definidos ni alineación entre áreas.", emoji: "🔴" },
-  { min: 68, max: 106, color: "amarillo", label: "En desarrollo", desc: "Existen prácticas operativas ambientales y hay voluntad, pero la ejecución es inconsistente o requiere supervisión constante para mantenerse.", emoji: "🟡" },
-  { min: 107, max: 145, color: "verde", label: "Integrado", desc: "Las prácticas operativas ambientales forman parte de la operación diaria con criterios distribuidos en el equipo.", emoji: "🟢" },
+  { min: 0, max: 80, color: "rojo", label: "Inicial", desc: "Las prácticas operativas ambientales son mínimas o inexistentes. No hay estructura, responsables definidos ni alineación entre áreas.", emoji: "🔴" },
+  { min: 81, max: 128, color: "amarillo", label: "En desarrollo", desc: "Existen prácticas operativas ambientales y hay voluntad, pero la ejecución es inconsistente o requiere supervisión constante para mantenerse.", emoji: "🟡" },
+  { min: 129, max: 175, color: "verde", label: "Integrado", desc: "Las prácticas operativas ambientales forman parte de la operación diaria con criterios distribuidos en el equipo.", emoji: "🟢" },
 ];
 
 const SEMAFORO_CRITERIO = [
@@ -72,16 +88,16 @@ const DESCRIPCIONES_SECCION = {
     verde: "El equipo entiende qué hacer, por qué importa y existe un proceso claro para que el criterio sobre las prácticas operativas ambientales llegue también al personal nuevo.",
   },
   "Desperdicios y Recursos": {
-    que: "Evalúa si la empresa identifica dónde pierde recursos y si tiene acciones concretas para reducir esos desperdicios.",
-    rojo: "No hay claridad sobre dónde se generan los desperdicios de agua, energía o insumos. No existen acciones concretas para reducirlos.",
-    amarillo: "Hay alguna identificación de desperdicios pero las acciones para reducirlos son parciales o no están organizadas de forma sistemática.",
-    verde: "La empresa sabe dónde genera desperdicios y tiene acciones concretas en marcha para reducirlos dentro de la operación diaria.",
+    que: "Evalúa si la empresa identifica dónde pierde recursos —agua, energía, alimentos, compras e insumos, y residuos— y si tiene acciones concretas para reducir esas pérdidas.",
+    rojo: "No hay claridad sobre dónde se generan los desperdicios de agua, energía, alimentos, compras o residuos. No existen acciones concretas para reducirlos.",
+    amarillo: "Hay alguna identificación de desperdicios en algunas de estas áreas, pero las acciones para reducirlos son parciales o no están organizadas de forma sistemática.",
+    verde: "La empresa sabe dónde genera desperdicios en estas áreas y tiene acciones concretas en marcha para reducirlos dentro de la operación diaria.",
   },
   "Alineación Normativa": {
-    que: "Evalúa si la empresa conoce y cumple los requisitos normativos ambientales aplicables a su operación.",
-    rojo: "La empresa no tiene claridad sobre qué normas aplican a su operación o no está cumpliendo con los requisitos básicos de residuos, salubridad y manejo de recursos.",
-    amarillo: "La empresa conoce algunos requisitos normativos pero el cumplimiento es parcial o no está documentado con evidencia verificable.",
-    verde: "La empresa conoce los requisitos normativos aplicables, los cumple en la operación diaria y cuenta con algún registro o evidencia de ello.",
+    que: "Evalúa si la empresa conoce y cumple los requisitos normativos ambientales aplicables a su operación, y si tiene visibilidad sobre regulación que viene en camino — como la nueva normativa de economía circular.",
+    rojo: "La empresa no tiene claridad sobre qué normas aplican a su operación, no está cumpliendo con los requisitos básicos de residuos, salubridad y manejo de recursos, y no tiene en el radar los cambios regulatorios que se aproximan.",
+    amarillo: "La empresa conoce algunos requisitos normativos pero el cumplimiento es parcial o no está documentado con evidencia verificable. Puede tener poca o nula visibilidad sobre la regulación de economía circular que viene.",
+    verde: "La empresa conoce los requisitos normativos aplicables, los cumple en la operación diaria, cuenta con algún registro o evidencia de ello, y tiene visibilidad sobre los cambios regulatorios que se aproximan.",
   },
 };
 
@@ -128,10 +144,10 @@ function getColor(color) {
   return { bg: "#F5F7FA", border: "#CCCCCC", text: "#1C2D42", badge: "#CCCCCC" };
 }
 
-function calcularResultados(respuestas) {
+function calcularResultados(respuestas, preguntas) {
   let totalIntegracion = 0;
   let totalCriterio = 0;
-  PREGUNTAS.forEach(p => {
+  preguntas.forEach(p => {
     const val = respuestas[p.id];
     if (val) {
       totalIntegracion += val * (p.critica ? 2 : 1);
@@ -184,7 +200,8 @@ export default function DiagnosticoInicial() {
   const [showGuia, setShowGuia] = useState({});
 
   const nicho = TIPOS_EDUCATIVO.includes(clienteTipo) ? "educativo" : "gastronomico";
-  const resultados = calcularResultados(respuestas);
+  const PREGUNTAS = getPreguntas(nicho);
+  const resultados = calcularResultados(respuestas, PREGUNTAS);
   const preguntasSeccion = PREGUNTAS.filter(p => p.seccion === SECCIONES[seccionActual]);
   const totalRespondidas = Object.keys(respuestas).length;
   const progresoPct = Math.round((totalRespondidas / PREGUNTAS.length) * 100);
@@ -202,7 +219,7 @@ export default function DiagnosticoInicial() {
           <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 2, color: "#0097D7", textTransform: "uppercase", marginBottom: 6 }}>Potencia Consultoría Estratégica</div>
           <div style={{ fontSize: 11, color: "#AAA", letterSpacing: 1, marginBottom: 20 }}>Aprender · Transformar · Sostener</div>
           <h1 style={{ fontSize: 22, fontWeight: 800, color: "#011B5B", margin: "0 0 10px", lineHeight: 1.2 }}>Diagnóstico Inicial de Sostenibilidad Operativa</h1>
-          <p style={{ color: "#666", fontSize: 13, lineHeight: 1.6, margin: 0 }}>Conversación inicial · 20–25 minutos · 23 preguntas · 7 secciones</p>
+          <p style={{ color: "#666", fontSize: 13, lineHeight: 1.6, margin: 0 }}>Conversación inicial · 25–30 minutos · 27 preguntas · 7 secciones</p>
         </div>
         <div style={{ background: "#F5F7FA", borderRadius: 12, padding: "14px 18px", marginBottom: 24 }}>
           <p style={{ fontSize: 13, color: "#444", lineHeight: 1.7, margin: 0 }}>Esta herramienta es una <strong>conversación guiada</strong> — no una auditoría. Exploramos juntos el estado actual de las prácticas operativas ambientales para identificar las oportunidades de mejora más importantes.</p>
@@ -274,7 +291,7 @@ export default function DiagnosticoInicial() {
       <div style={{ maxWidth: 760, margin: "0 auto", padding: "24px 20px 120px" }}>
         {totalRespondidas > 0 && (
           <div style={{ display: "flex", gap: 12, marginBottom: 20 }}>
-            <PuntajeCard label="Integración operativa" valor={resultados.totalIntegracion} max={145} nivel={resultados.nivelInt} mini />
+            <PuntajeCard label="Integración operativa" valor={resultados.totalIntegracion} max={175} nivel={resultados.nivelInt} mini />
             <PuntajeCard label="Criterio operativo distribuido" valor={resultados.totalCriterio} max={80} nivel={resultados.nivelCrit} mini />
           </div>
         )}
@@ -351,7 +368,7 @@ export default function DiagnosticoInicial() {
 
         <div style={{ maxWidth: 760, margin: "0 auto", padding: "24px 20px 60px" }}>
           <div style={{ display: "flex", gap: 16, marginBottom: 24 }}>
-            <PuntajeCard label="Integración operativa" valor={totalIntegracion} max={145} nivel={nivelInt} />
+            <PuntajeCard label="Integración operativa" valor={totalIntegracion} max={175} nivel={nivelInt} />
             <PuntajeCard label="Criterio operativo distribuido" valor={totalCriterio} max={80} nivel={nivelCrit} />
           </div>
 
@@ -382,6 +399,34 @@ export default function DiagnosticoInicial() {
             )}
           </div>
 
+          {/* FORTALEZAS */}
+          <div style={{ background: "white", borderRadius: 16, padding: "22px 26px", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", marginBottom: 22 }}>
+            <h3 style={{ fontSize: 14, fontWeight: 800, color: "#011B5B", margin: "0 0 4px" }}>Áreas con mayor solidez operativa</h3>
+            <p style={{ fontSize: 11, color: "#888", margin: "0 0 18px" }}>Las dos áreas con mayor puntaje — la base desde donde se construye</p>
+            {[...brechas].reverse().slice(0, 2).map(({ sec, promedio, nivel }) => {
+              const pct = Math.round((promedio / 5) * 100);
+              const desc = DESCRIPCIONES_SECCION[sec];
+              return (
+                <div key={sec} style={{ marginBottom: 14, background: "#F0FDF4", borderRadius: 10, padding: "14px 16px", border: "1.5px solid #22C55E33" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <span style={{ fontSize: 14 }}>✅</span>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: "#1C2D42" }}>{sec}</span>
+                    </div>
+                    <span style={{ fontSize: 13, color: "#22C55E", fontWeight: 800 }}>{pct}%</span>
+                  </div>
+                  <div style={{ background: "#E5E7EB", borderRadius: 6, height: 7, overflow: "hidden", marginBottom: 10 }}>
+                    <div style={{ width: `${pct}%`, background: "#22C55E", height: "100%", borderRadius: 6, transition: "width 0.6s ease" }} />
+                  </div>
+                  {desc && (
+                    <p style={{ fontSize: 12, color: "#15803D", margin: 0, lineHeight: 1.5, fontStyle: "italic" }}>{desc.verde}</p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* BRECHAS */}
           <div style={{ background: "white", borderRadius: 16, padding: "22px 26px", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", marginBottom: 22 }}>
             <h3 style={{ fontSize: 14, fontWeight: 800, color: "#011B5B", margin: "0 0 4px" }}>Áreas con mayor oportunidad de mejora</h3>
             <p style={{ fontSize: 11, color: "#888", margin: "0 0 18px" }}>Las tres áreas con menor puntaje en este diagnóstico</p>
